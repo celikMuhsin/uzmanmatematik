@@ -1,49 +1,102 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eğitim Portalı</title>
+    <title>Uzman Matematik - Eğitim Portalı</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #fbfcfd; }
+        .animate-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react-katex": "https://esm.sh/react-katex@^3.1.0",
-    "katex/": "https://esm.sh/katex@^0.16.27/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
 </head>
 <body>
     <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom": "https://esm.sh/react-dom@18.2.0",
+        "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+      }
+    }
+    </script>
+
+    <script type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import ReactDOM from 'react-dom';
+        import { 
+            Gamepad2, Trophy, Zap, Sword, Target, Crown, 
+            BookOpen, Lock, Mail, User, ArrowRight, X, LogIn, UserPlus 
+        } from 'lucide-react';
+
+        // --- ANA UYGULAMA BİLEŞENİ ---
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('Home');
+            const [currentUser, setCurrentUser] = useState(null);
+            const [gamePoints, setGamePoints] = useState(0);
+
+            // Sayfa içerikleri
+            const renderContent = () => {
+                switch (currentPage) {
+                    case 'Home':
+                        return (
+                            <div className="space-y-8 animate-in">
+                                <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 p-12 rounded-[3rem] text-white shadow-2xl">
+                                    <h1 className="text-5xl font-black mb-4">Uzman Matematik'e Hoş Geldin!</h1>
+                                    <p className="text-xl opacity-90">Matematik dünyasında yeni keşifler yapmaya hazır mısın?</p>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div onClick={() => setCurrentPage('Games')} className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
+                                        <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                            <Gamepad2 size={32} />
+                                        </div>
+                                        <h3 className="text-3xl font-black text-slate-800 mb-2">Zihin Egzersizleri</h3>
+                                        <p className="text-slate-500">Oyunlarla işlem yeteneğini hızlandır ve puan kazan!</p>
+                                    </div>
+                                    <div onClick={() => setCurrentPage('Lessons')} className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
+                                        <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                            <BookOpen size={32} />
+                                        </div>
+                                        <h3 className="text-3xl font-black text-slate-800 mb-2">Ders Notları</h3>
+                                        <p className="text-slate-500">Konu anlatımları ve örnek sorularla matematiği sev!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    case 'Games':
+                        return <div className="p-10 bg-white rounded-[3rem] text-center border shadow-sm">
+                            <h2 className="text-4xl font-black mb-4">Oyunlar Yakında!</h2>
+                            <p className="mb-8">Şu an teknik altyapı güncelleniyor.</p>
+                            <button onClick={() => setCurrentPage('Home')} className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold">Geri Dön</button>
+                        </div>;
+                    default:
+                        return <div className="text-center py-20">Yapım aşamasında...</div>;
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    <header className="bg-white border-b border-slate-100 px-8 py-6 flex justify-between items-center">
+                        <div onClick={() => setCurrentPage('Home')} className="text-2xl font-black text-indigo-600 cursor-pointer tracking-tighter">UZMANMATEMATİK</div>
+                        <div className="flex gap-4">
+                            <div className="bg-slate-100 px-4 py-2 rounded-xl font-bold text-slate-600 flex items-center gap-2">
+                                <Trophy size={18} className="text-amber-500" /> {gamePoints} Puan
+                            </div>
+                        </div>
+                    </header>
+                    <main className="flex-1 p-10 max-w-7xl mx-auto w-full">
+                        {renderContent()}
+                    </main>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+    </script>
 </body>
 </html>
