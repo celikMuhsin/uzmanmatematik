@@ -2,17 +2,235 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Uzman Matematik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uzman Matematik - Eğitim Portalı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background: #4f46e5; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }
-        .box { text-align: center; border: 4px solid white; pading: 20px; border-radius: 20px; padding: 40px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #fbfcfd; margin: 0; }
+        .animate-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .math-card { transition: all 0.3s ease; }
+        .math-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>UZMAN MATEMATİK</h1>
-        <p>Sistem Başarıyla Bağlandı!</p>
-        <p>Şu an bu yazıyı görüyorsanız her şey yolunda demektir.</p>
-    </div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- İkon Bileşeni ---
+        const Icon = ({ name, size = 24, className = "" }) => {
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} style={{width: size, height: size}} className={className}></i>;
+        };
+
+        // --- Ana Uygulama ---
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('Home');
+            const [gamePoints, setGamePoints] = useState(0);
+
+            // Başlangıç Puanını Yükle
+            useEffect(() => {
+                const savedPoints = localStorage.getItem('uzman_points');
+                if (savedPoints) setGamePoints(parseInt(savedPoints));
+            }, []);
+
+            const updatePoints = (pts) => {
+                const newPoints = gamePoints + pts;
+                setGamePoints(newPoints);
+                localStorage.setItem('uzman_points', newPoints.toString());
+            };
+
+            const renderContent = () => {
+                switch (currentPage) {
+                    case 'Home':
+                        return (
+                            <div className="space-y-8 animate-in">
+                                <section className="bg-gradient-to-br from-indigo-600 to-indigo-800 p-8 md:p-16 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+                                    <div className="relative z-10">
+                                        <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Uzman Matematik'e<br/>Hoş Geldin!</h1>
+                                        <p className="text-indigo-100 text-lg md:text-xl max-w-2xl font-medium leading-relaxed">
+                                            Matematik dünyasında yeni keşifler yapmaya hazır mısın? Dersleri inceleyebilir, oyunlarla kendini test edebilirsin.
+                                        </p>
+                                    </div>
+                                    <div className="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4">
+                                        <Icon name="brain" size={300} />
+                                    </div>
+                                </section>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div onClick={() => setCurrentPage('Games')} className="math-card bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer group">
+                                        <div className="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                            <Icon name="gamepad-2" />
+                                        </div>
+                                        <h3 className="text-2xl font-black text-slate-800 mb-2">Oyunlar</h3>
+                                        <p className="text-slate-500 font-medium">Saniye Savaşları ve Kuvvet Avcısı ile hızını test et!</p>
+                                    </div>
+
+                                    <div onClick={() => setCurrentPage('Lessons')} className="math-card bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer group">
+                                        <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                            <Icon name="book-open" />
+                                        </div>
+                                        <h3 className="text-2xl font-black text-slate-800 mb-2">Dersler</h3>
+                                        <p className="text-slate-500 font-medium">Matematik konularını uzmanından öğren, eksiklerini kapat.</p>
+                                    </div>
+
+                                    <div onClick={() => setCurrentPage('Quiz')} className="math-card bg-white p-8 rounded-[2rem] border border-slate-200 cursor-pointer group">
+                                        <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                                            <Icon name="pencil" />
+                                        </div>
+                                        <h3 className="text-2xl font-black text-slate-800 mb-2">Sınavlar</h3>
+                                        <p className="text-slate-500 font-medium">Konu testlerini çöz, başarı puanlarını topla.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    case 'Games':
+                        return <GamePanel gamePoints={gamePoints} onUpdatePoints={updatePoints} onBack={() => setCurrentPage('Home')} />;
+                    case 'Lessons':
+                        return <div className="p-12 bg-white rounded-[3rem] text-center border">
+                            <Icon name="construction" size={64} className="mx-auto text-indigo-500 mb-6" />
+                            <h2 className="text-3xl font-black mb-4">Ders İçerikleri Hazırlanıyor</h2>
+                            <button onClick={() => setCurrentPage('Home')} className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold mt-4">Geri Dön</button>
+                        </div>;
+                    default:
+                        return <div className="text-center py-20">Sayfa bulunamadı.</div>;
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col pb-20">
+                    <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+                        <div onClick={() => setCurrentPage('Home')} className="text-2xl font-black text-indigo-600 cursor-pointer tracking-tighter">UZMANMATEMATİK</div>
+                        <div className="flex items-center gap-4">
+                            <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-2xl font-bold flex items-center gap-2 border border-indigo-100">
+                                <Icon name="trophy" size={20} className="text-amber-500" />
+                                <span>{gamePoints} Puan</span>
+                            </div>
+                        </div>
+                    </header>
+                    <main className="flex-1 p-4 md:p-10 max-w-7xl mx-auto w-full">
+                        {renderContent()}
+                    </main>
+                </div>
+            );
+        };
+
+        // --- OYUN PANELİ (Senin gönderdiğin Saniye Savaşları Dahil) ---
+        const GamePanel = ({ gamePoints, onUpdatePoints, onBack }) => {
+            const [gameState, setGameState] = useState('menu');
+            const [roundPoints, setRoundPoints] = useState(0);
+
+            if (gameState === 'saniye-savaslari') {
+                return <SaniyeSavaslari 
+                    onFinish={(pts) => { onUpdatePoints(pts); setRoundPoints(pts); setGameState('result'); }} 
+                    onExit={() => setGameState('menu')} 
+                />;
+            }
+
+            if (gameState === 'result') {
+                return (
+                    <div className="bg-white p-12 rounded-[3rem] text-center shadow-xl border animate-in">
+                        <div className="w-24 h-24 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Icon name="award" size={48} />
+                        </div>
+                        <h2 className="text-4xl font-black mb-2">Tebrikler!</h2>
+                        <p className="text-slate-500 text-xl mb-8">Bu oyundan <strong>{roundPoints}</strong> puan kazandın.</p>
+                        <button onClick={() => setGameState('menu')} className="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black">Yeni Oyun</button>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="space-y-8 animate-in">
+                    <div className="flex items-center gap-4">
+                        <button onClick={onBack} className="p-3 bg-white border rounded-2xl hover:bg-slate-50 transition-colors">
+                            <Icon name="arrow-left" />
+                        </button>
+                        <h2 className="text-3xl font-black text-slate-800">Oyun Arenası</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div onClick={() => setGameState('saniye-savaslari')} className="bg-white p-10 rounded-[2.5rem] border-4 border-transparent hover:border-indigo-600 transition-all cursor-pointer group shadow-sm">
+                            <Icon name="zap" size={48} className="text-indigo-600 mb-6 group-hover:scale-110 transition-transform" />
+                            <h3 className="text-3xl font-black mb-2">Saniye Savaşları</h3>
+                            <p className="text-slate-500 mb-6">10 sayıyı zihninden topla, hıza yetiş!</p>
+                            <span className="text-indigo-600 font-black">ŞİMDİ OYNA →</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- SANİYE SAVAŞLARI OYUN MOTORU ---
+        const SaniyeSavaslari = ({ onFinish, onExit }) => {
+            const [num, setNum] = useState(null);
+            const [count, setCount] = useState(0);
+            const [sum, setSum] = useState(0);
+            const [userAns, setUserAns] = useState("");
+            const [mode, setMode] = useState('get-ready');
+
+            useEffect(() => {
+                if (mode === 'playing') {
+                    if (count < 10) {
+                        const randomNum = Math.floor(Math.random() * 20) - 10;
+                        setNum(randomNum);
+                        setSum(prev => prev + randomNum);
+                        const timer = setTimeout(() => setCount(c => c + 1), 1200);
+                        return () => clearTimeout(timer);
+                    } else {
+                        setMode('asking');
+                    }
+                }
+            }, [count, mode]);
+
+            return (
+                <div className="bg-white p-12 rounded-[3rem] shadow-2xl border text-center max-w-xl mx-auto animate-in">
+                    {mode === 'get-ready' && (
+                        <div className="space-y-6">
+                            <h2 className="text-3xl font-black">Hazır Mısın?</h2>
+                            <p className="text-slate-500">10 sayı gelecek, toplamı bulmalısın.</p>
+                            <button onClick={() => setMode('playing')} className="bg-indigo-600 text-white px-12 py-4 rounded-2xl font-black text-xl">BAŞLA</button>
+                        </div>
+                    )}
+                    {mode === 'playing' && (
+                        <div>
+                            <div className="text-slate-300 font-bold mb-4">{count + 1} / 10</div>
+                            <div className="text-8xl font-black text-indigo-600 animate-bounce">
+                                {num > 0 ? `+${num}` : num}
+                            </div>
+                        </div>
+                    )}
+                    {mode === 'asking' && (
+                        <div className="space-y-6">
+                            <h2 className="text-3xl font-black text-slate-800">Toplam Kaç?</h2>
+                            <input 
+                                type="number" 
+                                autoFocus
+                                value={userAns} 
+                                onChange={e => setUserAns(e.target.value)}
+                                className="w-full text-center text-5xl font-black p-6 bg-slate-50 border-4 border-indigo-100 rounded-3xl outline-none focus:border-indigo-600"
+                            />
+                            <button 
+                                onClick={() => onFinish(parseInt(userAns) === sum ? 50 : 0)}
+                                className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black text-xl"
+                            >
+                                KONTROL ET
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
